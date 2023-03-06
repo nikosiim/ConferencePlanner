@@ -1,5 +1,6 @@
 using ConferencePlanner.Data;
 using ConferencePlanner.GraphQL;
+using ConferencePlanner.GraphQL.Sessions;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,16 +14,17 @@ builder.Services.AddGraphQLServer()
     .RegisterDbContext<ApplicationDbContext>()
     .AddConferencePlannerTypes()
     .AddDataLoader<SpeakerByIdDataLoader>()
-    .AddGlobalObjectIdentification();
-    //.AddFiltering()
-    //.AddSorting()
-    //.AddProjections();
-
+    .AddGlobalObjectIdentification()
+    .AddFiltering()
+    .AddSorting()
+    .AddInMemorySubscriptions();
+//.AddProjections();
 
 
 var app = builder.Build();
 
 app.MapGet("/", () => "Hello World!");
+app.UseWebSockets();
 app.MapGraphQL();
 
 app.Run();

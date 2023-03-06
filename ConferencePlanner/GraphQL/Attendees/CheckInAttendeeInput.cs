@@ -2,5 +2,5 @@
 
 namespace ConferencePlanner.GraphQL.Attendees
 {
-    public record CheckInAttendeeInput([ID(nameof(Session))] int SessionId, [ID(nameof(Attendee))] int AttendeeId);
+    public record CheckInAttendeeInput([property: ID<Session>] int SessionId, [property: ID<Attendee>] int AttendeeId);
 }

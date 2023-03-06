@@ -1,14 +1,14 @@
-﻿using ConferencePlanner.Data.Entities;
-using ConferencePlanner.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using ConferencePlanner.Data;
+using ConferencePlanner.Data.Entities;
 
 namespace ConferencePlanner.GraphQL.Speakers
 {
     [QueryType]
     public class SpeakerQueries
     {
-        public Task<List<Speaker>> GetSpeakers(ApplicationDbContext context) =>
-            context.Speakers.ToListAsync();
+        [UsePaging]
+        public IQueryable<Speaker> GetSpeakers(ApplicationDbContext context) =>
+            context.Speakers.OrderBy(t => t.Name);
 
         [NodeResolver]
         public Task<Speaker> GetSpeakerByIdAsync(int id, ISpeakerByIdDataLoader dataLoader, CancellationToken cancellationToken) =>
