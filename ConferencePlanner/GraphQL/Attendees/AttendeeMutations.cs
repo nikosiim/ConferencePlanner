@@ -1,5 +1,5 @@
-﻿using ConferencePlanner.Data.Entities;
-using ConferencePlanner.Data;
+﻿using ConferencePlanner.Data;
+using ConferencePlanner.Data.Entities;
 using ConferencePlanner.GraphQL.Common;
 using HotChocolate.Subscriptions;
 using Microsoft.EntityFrameworkCore;
@@ -11,17 +11,19 @@ namespace ConferencePlanner.GraphQL.Attendees
     {
         public async Task<RegisterAttendeePayload> RegisterAttendeeAsync(RegisterAttendeeInput input, ApplicationDbContext context, CancellationToken cancellationToken)
         {
-            var attendee = new Attendee
+            Attendee? attendee = await context.Attendees.FirstOrDefaultAsync(t => t.EmailAddress == input.EmailAddress, cancellationToken);
+            if (attendee is null)
             {
-                FirstName = input.FirstName,
-                LastName = input.LastName,
-                UserName = input.UserName,
-                EmailAddress = input.EmailAddress
-            };
-
-            context.Attendees.Add(attendee);
-
-            await context.SaveChangesAsync(cancellationToken);
+                attendee = new Attendee
+                {
+                    FirstName = input.FirstName,
+                    LastName = input.LastName,
+                    UserName = input.UserName,
+                    EmailAddress = input.EmailAddress
+                };
+                context.Attendees.Add(attendee);
+                await context.SaveChangesAsync(cancellationToken);
+            }
 
             return new RegisterAttendeePayload(attendee);
         }
@@ -33,15 +35,20 @@ namespace ConferencePlanner.GraphQL.Attendees
             CancellationToken cancellationToken)
         {
             Attendee? attendee = await context.Attendees.FirstOrDefaultAsync(t => t.Id == input.AttendeeId, cancellationToken);
-
             if (attendee is null)
             {
                 return new CheckInAttendeePayload(new UserError("Attendee not found.", "ATTENDEE_NOT_FOUND"));
             }
 
-            attendee.SessionsAttendees.Add(new SessionAttendee { SessionId = input.SessionId });
-
-            await context.SaveChangesAsync(cancellationToken);
+            try
+            {
+                attendee.SessionsAttendees.Add(new SessionAttendee { SessionId = input.SessionId });
+                await context.SaveChangesAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
 
             await eventSender.SendAsync("OnAttendeeCheckedIn_" + input.SessionId, input.AttendeeId, cancellationToken);
 

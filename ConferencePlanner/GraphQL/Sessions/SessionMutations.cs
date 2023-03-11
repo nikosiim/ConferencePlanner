@@ -68,7 +68,7 @@ namespace ConferencePlanner.GraphQL.Sessions
 
             await context.SaveChangesAsync(cancellationToken);
 
-            await eventSender.SendAsync(nameof(SessionSubscriptions.OnSessionScheduledAsync), session.Id, cancellationToken);
+            await eventSender.SendAsync(nameof(SessionSubscriptions.OnSessionScheduled), session.Id, cancellationToken);
 
             return new ScheduleSessionPayload(session);
         }
