@@ -2,6 +2,7 @@
 {
     public class Book
     {
-        public string Title { get; set; }
+        public required string Title { get; set; }
+        public Author? Author { get; set; }
     }
 }

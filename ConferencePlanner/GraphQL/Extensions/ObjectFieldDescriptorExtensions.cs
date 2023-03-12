@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace ConferencePlanner.GraphQL.Extensions
+﻿namespace ConferencePlanner.GraphQL.Extensions
 {
     public static class ObjectFieldDescriptorExtensions
     {
