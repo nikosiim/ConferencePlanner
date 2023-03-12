@@ -7,6 +7,7 @@ namespace ConferencePlanner.GraphQL.Attendees
     public class AttendeeQueries
     {
         [UsePaging]
+        [UseFiltering(typeof(AttendeeFilterType))]
         public IQueryable<Attendee> GetAttendees(ApplicationDbContext context) =>
             context.Attendees;
 

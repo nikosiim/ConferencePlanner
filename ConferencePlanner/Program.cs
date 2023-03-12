@@ -1,7 +1,7 @@
 using ConferencePlanner.Data;
-using ConferencePlanner.GraphQL;
 using ConferencePlanner.GraphQL.Users;
 using ConferencePlanner.Logging;
+using HotChocolate.Types.Pagination;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,14 +15,15 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddGraphQLServer()
     .RegisterDbContext<ApplicationDbContext>()
     .AddConferencePlannerTypes()
-    .AddDataLoader<SpeakerByIdDataLoader>()
     .AddGlobalObjectIdentification()
     .AddFiltering()
     .AddSorting()
     .AddHttpRequestInterceptor<CustomHttpRequestInterceptor>()
     //.AddDiagnosticEventListener<ConsoleQueryLogger>()
     .AddDiagnosticEventListener(sp => new MiniProfilerQueryLogger())
-    .AddInMemorySubscriptions();
+    .AddInMemorySubscriptions()
+    .SetPagingOptions(new PagingOptions{IncludeTotalCount = true})
+    .ModifyRequestOptions(o => o.IncludeExceptionDetails = true); // To see the exception in the response beside the unexpected execution error
 
 /*
 // To remove [GlobalState] attribute from resolver
