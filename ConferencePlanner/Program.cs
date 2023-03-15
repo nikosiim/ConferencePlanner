@@ -25,11 +25,16 @@ builder.Services.AddGraphQLServer()
     .SetPagingOptions(new PagingOptions{IncludeTotalCount = true})
     .ModifyRequestOptions(o => o.IncludeExceptionDetails = true); // To see the exception in the response beside the unexpected execution error
 
-/*
-// To remove [GlobalState] attribute from resolver
-builder.Services.AddSingleton<IParameterExpressionBuilder>(new CustomParameterExpressionBuilder<int?>(
-        c => c.GetGlobalState<int?>("currentUserId"), p => p.Name.EqualsOrdinal("currentUserId")));
-*/
+    /*
+        // If you want to declare fields explicitly on all types in your schema, you can set the following option
+        .ModifyOptions(o => o.DefaultBindingBehavior = BindingBehavior.Explicit)
+    */
+
+    /*
+        // To remove [GlobalState] attribute from resolver
+        builder.Services.AddSingleton<IParameterExpressionBuilder>(new CustomParameterExpressionBuilder<int?>(
+            c => c.GetGlobalState<int?>("currentUserId"), p => p.Name.EqualsOrdinal("currentUserId")));
+    */
 
 // The results can be seen at: http://localhost:{port number}/profiler/results-index
 builder.Services

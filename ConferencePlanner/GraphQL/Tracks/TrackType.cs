@@ -23,6 +23,14 @@ namespace ConferencePlanner.GraphQL.Tracks
 
         protected override void Configure(IObjectTypeDescriptor<Track> descriptor)
         {
+            /*
+            // this defines that fields shall only be defined explicitly
+            descriptor.BindFieldsExplicitly();
+
+            // now declare the fields that you want to define.
+            descriptor.Field(t => t.Name);  
+            */
+
             descriptor.Field(t => t.Sessions)
                 .ResolveWith<Resolvers>(t => t.GetSessionsAsync(default!, default!, default!, default))
                 .UseServiceScope()
